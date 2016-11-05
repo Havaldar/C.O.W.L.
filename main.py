@@ -88,8 +88,8 @@ def main():
     name = sys.argv[1]
     num = int(sys.argv[2])
     graph = nx.Graph(name="C.O.W.L.")
-    load_vertices(graph, 'vertices.txt')
-    load_edges(graph, 'edges.txt')
+    load_vertices(graph, 'data/vertices.txt')
+    load_edges(graph, 'data/edges.txt')
     partition = find_closest_chars(graph, name, num)
     draw_graph(partition)
 
