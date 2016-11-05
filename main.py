@@ -4,6 +4,7 @@ import scipy as sp
 from numpy import linalg as la
 import math
 import sys
+import matplotlib.pyplot as plt
 
 def load_vertices(graph, file):
     with open(file, 'rU') as data:
@@ -70,18 +71,18 @@ def find_closest_chars(graph, node, k):
     else:
         return graph.subgraph(partition_a if node in partition_a else partition_b)
 
-def draw_graph(graph, character):
+def draw_graph(graph, character, names):
     nodes = graph.nodes()
-    centrality = nx.eigenvector_centrality_numpy(g)
+    centrality = nx.eigenvector_centrality_numpy(graph)
     pos = nx.spring_layout(graph)
     plt.figure(figsize=(12, 12))
-    graph.node[character]["type"] = "center"
-    valmap = { "hero":  0.54, "center": 0.87 }
-    types = nx.get_node_attributes(graph, "type")
-    values = [valmap.get(types[node], 0.25) for node in nodes]
-    sizes = [int(centrality[node] * 400) for node in nodes]
+    values = [0.87 if node == character else 0.54 for node in nodes]
+    sizes = [int(centrality[node] * 800) for node in nodes]
+    labels = { id: names[node] for node in nodes }
     nx.draw_networkx_edges(graph, pos)
     nx.draw_networkx_nodes(graph, pos, node_size=sizes, node_color=values, cmap=plt.cm.hot, with_labels=False)
+    nx.draw_networkx_labels(graph, pos, labels, font_color="white")
+    plt.axis('off')
     plt.show()
 
 def main():
@@ -91,7 +92,9 @@ def main():
     load_vertices(graph, 'data/vertices.txt')
     load_edges(graph, 'data/edges.txt')
     partition = find_closest_chars(graph, name, num)
-    draw_graph(partition)
+    names = nx.get_node_attribute(graph, 'name')
+    print reduce(lambda x, y: x + " " + y, [names[node] for node in nodes])
+    draw_graph(partition, name, names)
 
-if __name__ == 'main':
+if __name__ == '__main__':
     main()
